@@ -1,0 +1,30 @@
+<%@ include file="/WEB-INF/jspf/head.jspf"%>
+<header id="masthead" class="site-header">
+	<div class="site-branding">
+		<h1 class="site-title">
+			<a href="index.jsp" rel="home">Cinema</a>
+		</h1>
+		<h2 class="site-description">Entertainment for everyone</h2>
+	</div>
+	<nav id="site-navigation" class="main-navigation">
+	<c:choose>
+        <c:when test="${user == null }">
+				<form action="" method="post" id="commentform"
+					class="authorisation-form">
+					<input type="hidden" name="command" value="authorisation" /> <input
+						id="login" name="login" type="text" size="20" aria-required="true" />
+					<input id="password" name="password" type="password" size="20"
+						aria-required="true" /> <input name="submit" type="submit"
+						id="submit" class="submit" value="Log in" />
+				</form>
+			</c:when>
+        <c:when test="${user != null }"> 
+            <form action="" method="post" id="commentform" class="authorisation-form">
+            <input type="hidden" name="command" value="logout" /> 
+                Hi, ${user.firstName} ${user.lastName}
+                <input name="logout" type="submit" id="logout" class="submit" value="Logout" />
+            </form> 
+        </c:when>
+    </c:choose>
+	</nav>
+</header>
