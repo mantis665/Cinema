@@ -19,6 +19,7 @@
 			</main>
 		</div>
 	</div>
-	<%@ include file="/WEB-INF/jspf/footer.jspf"%>
 </body>
+<%@ include file="/WEB-INF/jspf/footer.jspf"%>
+<%@ include file="/WEB-INF/jspf/script-include.jspf"%>
 </html>
