@@ -7,16 +7,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.panaskin.cinema.Path;
 import com.panaskin.cinema.exception.AppException;
 import com.panaskin.cinema.web.command.Command;
 import com.panaskin.cinema.web.command.CommandContainer;
 
 public class Controller extends HttpServlet {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -9114376076104812954L;
+    public static final Logger log = LogManager.getLogger(Controller.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,6 +33,7 @@ public class Controller extends HttpServlet {
 
     private void process(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        log.trace("I'm in =>> " + this.getClass().getName());
         String commandName = request.getParameter("command");
         if (commandName == null || commandName.isEmpty()) {
             commandName = "default";

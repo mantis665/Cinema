@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,33 +18,38 @@ public class Runner {
     private static final String DB_PATH = "jdbc:mysql://127.0.0.1:3306/cinema";
 
     public static void main(String[] args) throws SQLException {
-        String query = "SELECT * FROM user";
-        String query2 = "SELECT * FROM user WHERE login = ?";
-        String param = "gena";
         List<User> users = null;
-        User user = new User();
-        user.setLogin("Mantis66231");
-        user.setPassword("rerere");
-        user.setFirstName("Gennadiy");
-        user.setLastName("Karpan");
+        User user = createUser();
+        long createdUserId = -1;
+        
         Connection connection = null;
         PreparedStatement psmt = null;
         try {
             users = new ArrayList<>();
             connection = DriverManager.getConnection(DB_PATH, LOGIN, PASSWORD);
-            psmt = connection.prepareStatement(SQLQuery.SAVE_USER);
+            psmt = connection.prepareStatement(SQLQuery.SAVE_USER, Statement.RETURN_GENERATED_KEYS);
             int counter = 1;
             psmt.setString(counter++, user.getLogin());
             psmt.setString(counter++, user.getPassword());
             psmt.setString(counter++, user.getFirstName());
             psmt.setString(counter++, user.getLastName());
-            psmt.executeQuery();
+            psmt.executeUpdate();
+            ResultSet keys = psmt.getGeneratedKeys();
+            if (keys.next()) {
+                createdUserId = keys.getLong(1);
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        
-        for (User myUser : users) {
-            System.out.println(myUser);
-        }
+        System.out.println(createdUserId);
+    }
+    
+    public static User createUser() {
+        User user = new User();
+        user.setLogin("Mantis22123");
+        user.setPassword("rerere");
+        user.setFirstName("Gennadiy");
+        user.setLastName("Karpan");
+        return user;
     }
 }

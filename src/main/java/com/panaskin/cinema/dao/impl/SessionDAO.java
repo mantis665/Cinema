@@ -13,10 +13,12 @@ import java.util.TreeMap;
 import com.panaskin.cinema.dao.DAO;
 import com.panaskin.cinema.dao.impl.sql.SQLQuery;
 import com.panaskin.cinema.db.DBManager;
+import com.panaskin.cinema.db.DBUtils;
 import com.panaskin.cinema.entity.Film;
 import com.panaskin.cinema.entity.Session;
 import com.panaskin.cinema.exception.DAOException;
 import com.panaskin.cinema.exception.DBException;
+import com.panaskin.cinema.exception.message.ErrMessage;
 
 public class SessionDAO implements DAO<Session> {
     private DBManager dbManager;
@@ -34,52 +36,99 @@ public class SessionDAO implements DAO<Session> {
     }
 
     @Override
-    public boolean save(Session t) throws DAOException {
-        // TODO Auto-generated method stub
-        return true;
+    public long save(Session session) throws DAOException {
+        long createdSessionId = -1;
+        Connection con = null;
+        PreparedStatement psmt = null;
+        try {
+            con = dbManager.getConnection();
+            psmt = con.prepareStatement(SQLQuery.SAVE_SESSION, PreparedStatement.RETURN_GENERATED_KEYS);
+            int counter = 1;
+            psmt.setDate(counter++, session.getDate());
+            psmt.setTime(counter++, session.getTime());
+            psmt.setLong(counter++, session.getFilm().getId());
+            psmt.executeUpdate();
+            con.commit();
+            ResultSet keys = psmt.getGeneratedKeys();
+            if (keys.next()) {
+                createdSessionId = keys.getLong(1);
+            }
+        } catch (SQLException ex) {
+            DBUtils.connectionRollback(con);
+            throw new DAOException(ErrMessage.ERR_SESSION_CREATE, ex);
+        } finally {
+            DBUtils.preparedStmtClose(psmt);
+            DBUtils.connectionClose(con);
+        }
+        return createdSessionId;
     }
 
     @Override
     public Session find(long id) throws DAOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void update(Session t) throws DAOException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int delete(long id) throws DAOException {
+        Session session = null;
         Connection connect = null;
         PreparedStatement psmt = null;
-        int rowCount = 0;
+        ResultSet res = null;
+        try {
+            connect = dbManager.getConnection();
+            psmt = connect.prepareStatement(SQLQuery.FIND_SESSION_BY_ID);
+            psmt.setLong(1, id);
+            res = psmt.executeQuery();
+            connect.commit();
+            while (res.next()) {
+                session = new Session();
+                session.setId(res.getLong("id"));
+                session.setDate(res.getDate("date"));
+                session.setStart(res.getTime("start"));
+            }
+        } catch (SQLException ex) {
+            DBUtils.connectionRollback(connect);
+            throw new DAOException(ErrMessage.ERR_RECEIVE_ALL_USERS, ex);
+        } finally {
+            DBUtils.resSetClose(res);
+            DBUtils.preparedStmtClose(psmt);
+            DBUtils.connectionClose(connect);
+        }
+        return session;
+    }
+
+    @Override
+    public Session update(Session session) throws DAOException {
+        Connection connect = null;
+        PreparedStatement psmt = null;
+        try {
+            int counter = 1;
+            connect = dbManager.getConnection();
+            psmt = connect.prepareStatement(SQLQuery.UPDATE_SESSION);
+            psmt.setDate(counter++, session.getDate());
+            psmt.setTime(counter++, session.getTime());
+            psmt.setLong(counter++, session.getFilm().getId());
+            psmt.setLong(counter++, session.getId());
+            connect.commit();
+        } catch (SQLException ex) {
+            DBUtils.connectionRollback(connect);
+            throw new DAOException(ErrMessage.ERR_USER_UPDATE, ex);
+        } finally {
+            DBUtils.preparedStmtClose(psmt);
+            DBUtils.connectionClose(connect);
+        }
+        return session;
+    }
+
+    @Override
+    public void delete(long id) throws DAOException {
+        Connection connect = null;
+        PreparedStatement psmt = null;
         try {
             connect = dbManager.getConnection();
             psmt = connect.prepareStatement(SQLQuery.DELETE_SESSION_BY_ID);
             psmt.setInt(1, (int) id);
-            rowCount = psmt.executeUpdate();
+            psmt.executeUpdate();
             connect.commit();
-            return rowCount;
-        } catch (DBException ex) {
-            ex.printStackTrace();
         } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                psmt.close();
-            } catch (SQLException e) {
-                throw new DAOException("PreparedStatement can't be closed", e);
-            }
-            try {
-                connect.close();
-            } catch (SQLException e) {
-                throw new DAOException("Connection can't be closed", e);
-            }
+            DBUtils.preparedStmtClose(psmt);
+            DBUtils.connectionClose(connect);;
         }
-        return rowCount;
     }
 
     @Override

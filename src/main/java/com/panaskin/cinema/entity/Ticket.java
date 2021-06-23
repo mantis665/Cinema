@@ -35,5 +35,4 @@ public class Ticket extends Entity {
                ", userId=" + userId + 
                ", sessionId=" + sessionId + "]";
     }
-    
 }

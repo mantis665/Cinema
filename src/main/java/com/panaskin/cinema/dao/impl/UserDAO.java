@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,55 +33,78 @@ public class UserDAO implements DAO<User> {
     }
 
     @Override
-    public boolean save(User user) throws DAOException {
-        boolean userIs = false;
+    public long save(User user) throws DAOException {
+        long createdUserID = -1;
         Connection con = null;
         PreparedStatement psmt = null;
+        ResultSet keys = null;
         try {
             con = dbManager.getConnection();
-            psmt = con.prepareStatement(SQLQuery.SAVE_USER);
+            psmt = con.prepareStatement(SQLQuery.SAVE_USER, Statement.RETURN_GENERATED_KEYS);
             int counter = 1;
             psmt.setString(counter++, user.getLogin());
             psmt.setString(counter++, user.getPassword());
             psmt.setString(counter++, user.getFirstName());
             psmt.setString(counter++, user.getLastName());
-            userIs = psmt.execute();
+            psmt.executeUpdate();
             con.commit();
+            keys = psmt.getGeneratedKeys();
+            if (keys.next()) {
+                createdUserID = keys.getLong(1);
+            }
         } catch (SQLException ex) {
             DBUtils.connectionRollback(con);
             throw new DAOException(ErrMessage.ERR_USER_CREATE, ex);
         } finally {
+            DBUtils.resSetClose(keys);
             DBUtils.preparedStmtClose(psmt);
             DBUtils.connectionClose(con);
         }
-        return userIs;
+        return createdUserID;
     }
 
     @Override
-    public void update(User user) throws DAOException {
-        // TODO Auto-generated method stub
-
+    public User update(User user) throws DAOException {
+        Connection con = null;
+        PreparedStatement psmt = null;
+        try {
+            con = dbManager.getConnection();
+            psmt = con.prepareStatement(SQLQuery.UPDATE_USER);
+            int counter = 1;
+            psmt.setString(counter++, user.getLogin());
+            psmt.setString(counter++, user.getPassword());
+            psmt.setString(counter++, user.getFirstName());
+            psmt.setString(counter++, user.getLastName());
+            psmt.setLong(counter++, user.getId());
+            psmt.executeUpdate();
+            con.commit();
+        } catch (SQLException ex) {
+            DBUtils.connectionRollback(con);
+            throw new DAOException(ErrMessage.ERR_USER_UPDATE, ex);
+        } finally {
+            DBUtils.preparedStmtClose(psmt);
+            DBUtils.connectionClose(con);
+        }
+        return user;
     }
 
     @Override
-    public int delete(long id) throws DAOException {
+    public void delete(long id) throws DAOException {
         Connection connect = null;
         PreparedStatement psmt = null;
-        int rowCount = 0;
         try {
             connect = dbManager.getConnection();
             psmt = connect.prepareStatement(SQLQuery.DELETE_USER_BY_ID);
             psmt.setInt(1, (int) id);
-            rowCount = psmt.executeUpdate();
+            psmt.executeUpdate();
             connect.commit();
         } catch (SQLException ex) {
             DBUtils.connectionRollback(connect);
             throw new DAOException(ErrMessage.ERR_USER_DELETE, ex);
         } finally {
             DBUtils.preparedStmtClose(psmt);
-            DBUtils.connectionClose(connect);  
+            DBUtils.connectionClose(connect);
         }
-        return rowCount;
     }
 
     @Override

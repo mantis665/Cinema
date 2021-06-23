@@ -5,6 +5,10 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.panaskin.cinema.Path;
 import com.panaskin.cinema.dao.impl.UserDAO;
 import com.panaskin.cinema.entity.User;
@@ -12,8 +16,9 @@ import com.panaskin.cinema.exception.AppException;
 import com.panaskin.cinema.exception.message.ErrMessage;
 
 public class LoginCommand extends Command {
-    UserDAO userDAO;
     private static final long serialVersionUID = -7759075347625345914L;
+    public static final Logger log = LogManager.getLogger(LoginCommand.class);
+    UserDAO userDAO;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response)
@@ -23,6 +28,7 @@ public class LoginCommand extends Command {
 
     public String authorisation(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException, AppException {
+        log.trace("I'm in =>> " + this.getClass().getName());
         String login = null;
         String password = null;
         login = request.getParameter("login");

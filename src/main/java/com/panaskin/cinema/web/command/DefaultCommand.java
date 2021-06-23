@@ -6,6 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.panaskin.cinema.Path;
 import com.panaskin.cinema.dao.impl.SessionDAO;
 import com.panaskin.cinema.entity.Session;
@@ -15,11 +19,12 @@ import com.panaskin.cinema.exception.DAOException;
 
 public class DefaultCommand extends Command {
     private static final long serialVersionUID = 54729356749152145L;
-    
+    public static final Logger log = LogManager.getLogger(DefaultCommand.class);
     private static SessionDAO session;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
+        log.trace("I'm in =>> " + this.getClass().getName());
         session = SessionDAO.getInstance();
         Map<Date, List<Session>> sessions = null;
         try {
