@@ -17,7 +17,7 @@ public class SQLQuery {
     public static final String GET_ALL_SESSIONS = "SELECT * FROM session";
     
     //Ticket queries
-    public static final String SAVE_TICKET = "INSERT INTO ticket(seat_number, session_id) VALUES (?, ?)";
+    public static final String SAVE_TICKET = "INSERT INTO ticket(user_id, session_id) VALUES (?, ?)";
     public static final String FIND_TICKET_BY_ID = "SELECT * FROM ticket WHERE id= ?";
     public static final String UPDATE_TICKET = "UPDATE ticket SET seat_number = ?, session_id = ? WHERE id = ?";
     public static final String DELETE_TICKET_BY_ID = "DELETE FROM ticket WHERE id = ?";
@@ -25,7 +25,7 @@ public class SQLQuery {
     
     //Film queries
     public static final String SAVE_FILM = "INSERT INTO film(name) VALUES (?)";
-    public static final String FIND_FILM_BY_ID = "SEELECT * FROM film WHERE id = ?";
+    public static final String FIND_FILM_BY_ID = "SELECT * FROM film WHERE id = ?";
     public static final String UPDATE_FILM = "UPDATE film SET name = ? WHERE id = ?";
     public static final String DELETE_FILM_BY_ID = "DELETE FROM film WHERE id = ?";
     public static final String GET_ALL_FILMS = "SELECT * FROM film";

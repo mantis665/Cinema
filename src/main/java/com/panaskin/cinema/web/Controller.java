@@ -38,16 +38,13 @@ public class Controller extends HttpServlet {
         if (commandName == null || commandName.isEmpty()) {
             commandName = "default";
         }
+        log.trace(commandName);
         Command command = CommandContainer.getCommand(commandName);
         String forward = Path.ERROR_PAGE;
         try {
             forward = command.execute(request, response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (AppException e) {
-            e.printStackTrace();
+        } catch (AppException ex) {
+            request.setAttribute("errMessage", ex.getMessage());
         }
         request.getRequestDispatcher(forward).forward(request, response);
     }

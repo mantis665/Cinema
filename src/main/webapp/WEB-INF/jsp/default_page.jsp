@@ -9,7 +9,8 @@
 							<header class="entry-header">
 								<h2 class="entry-title">${session.key}</h2>
 								<c:forEach items="${session.value}" var="value">
-									<a class='portfoliotype'>${value.time} / ${value.film} / 4</a>
+									<a href="?command=session-page&sessionId=${value.id}"
+										class='portfoliotype'>${value.time} / ${value.film} / 4</a>
 									<br>
 								</c:forEach>
 							</header>

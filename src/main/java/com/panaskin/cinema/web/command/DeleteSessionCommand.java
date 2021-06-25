@@ -25,17 +25,19 @@ public class DeleteSessionCommand extends Command {
         return removeSession(request, response);
     }
 
-    public String removeSession(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, AppException {
+    public String removeSession(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException, AppException {
         log.trace("I'm in =>> " + this.getClass().getName());
         sessionDAO = SessionDAO.getInstance();
+        long sessionId = 0;
         String parameter = request.getParameter("sessionId");
         if (parameter == null || parameter.isEmpty()) {
             log.error(ErrMessage.ERR_SESSION_DELETE);
             throw new AppException(ErrMessage.ERR_SESSION_DELETE);
         }
-        int id = Integer.parseInt(parameter);
-        sessionDAO.delete(id);
-        
+        sessionId = Integer.parseInt(parameter);
+        sessionDAO.delete(sessionId);
+        log.trace("I'm in =>> " + this.getClass().getName());
         return Path.INDEX_PAGE;
     }
 

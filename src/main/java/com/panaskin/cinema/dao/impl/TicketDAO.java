@@ -40,7 +40,7 @@ public class TicketDAO implements DAO<Ticket> {
             con = dbManager.getConnection();
             psmt = con.prepareStatement(SQLQuery.SAVE_TICKET, Statement.RETURN_GENERATED_KEYS);
             int counter = 1;
-            psmt.setInt(counter++, ticket.getSeat());
+            psmt.setLong(counter++, ticket.getUserId());
             psmt.setLong(counter++, ticket.getSessionId());
             psmt.executeUpdate();
             con.commit();
@@ -72,7 +72,7 @@ public class TicketDAO implements DAO<Ticket> {
             con = dbManager.getConnection();
             psmt = con.prepareStatement(SQLQuery.UPDATE_TICKET);
             int counter = 1;
-            psmt.setInt(counter++, ticket.getSeat());
+            psmt.setLong(counter++, ticket.getId());
             psmt.setLong(counter++, ticket.getSessionId());
             psmt.setLong(counter++, ticket.getId());
             psmt.executeUpdate();

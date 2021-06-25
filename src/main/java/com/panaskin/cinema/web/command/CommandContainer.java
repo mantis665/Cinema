@@ -14,6 +14,8 @@ public class CommandContainer {
         commands.put("authorisation", new LoginCommand());
         commands.put("logout", new LogoutCommand());
         commands.put("session-remove", new DeleteSessionCommand());
+        commands.put("session-booking", new BookingCommand());
+        commands.put("session-page", new SessionPreBookingCommand());
     }
 
     public static Command getCommand(String name) {

@@ -80,6 +80,9 @@ public class SessionDAO implements DAO<Session> {
                 session.setId(res.getLong("id"));
                 session.setDate(res.getDate("date"));
                 session.setStart(res.getTime("start"));
+                Film film = new Film();
+                film.setId(res.getLong("film_id"));
+                session.setFilm(film);
             }
         } catch (SQLException ex) {
             DBUtils.connectionRollback(connect);

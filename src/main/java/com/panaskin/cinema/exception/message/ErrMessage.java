@@ -19,8 +19,9 @@ public class ErrMessage {
     public static final String ERR_FILM_DELETE = "Film has not been deleted"; 
     
 //SessionDAO messages
-    public static final String ERR_SESSION_DELETE = "Session with current id isn't exist";
+    public static final String ERR_SESSION_DELETE = "Session with current id doesn't exist";
     public static final String ERR_SESSION_CREATE = "Session didn't created";
+    public static final String ERR_SESSION_BOOKING = "Can't booking ticket on current session";
 
 //UserDAO messages
     public static final String ERR_RECEIVE_ALL_USERS = "Users have not been created";
@@ -34,7 +35,7 @@ public class ErrMessage {
     
 
     
-    public static final String ERR_INVALID_USER_DATA = "User's login or password can't be empty";
+    public static final String ERR_INVALID_USER_DATA = "Can't find user with current login or password";
     public static final String ERR_INVALID_USER_LOGIN = "User with this login doesn't exist";
     
     
